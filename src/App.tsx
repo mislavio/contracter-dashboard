@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useContext } from 'react'
+import { SignIn, SignUp } from './Containers'
+import { Container, Button, Label } from 'semantic-ui-react'
+import { observer } from 'mobx-react-lite'
+import { Route, Redirect, Switch } from 'react-router-dom'
 
-function App() {
+import 'semantic-ui-css/semantic.min.css'
+import './App.css'
+import { globalStoreContext } from './Stores/globalStore'
+
+const App: React.FC = () => {
+  const globalStore = useContext(globalStoreContext)
+  const { token } = globalStore
+  const { fetchAccount, isAuthenticated, account, signout } = globalStore.accountStore
+
+  useEffect(() => {
+    if (token) {
+      fetchAccount()
+    }
+  }, [fetchAccount, token])
+
+  if (isAuthenticated) {
+    return (
+      <Container className={'App'}>
+        <Label>Welcome {account.email}</Label>
+        <Button onClick={signout}>Signout</Button>
+      </Container>
+    )
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Container className={'App'}>
+      <Switch>
+        <Route exact path="/signin" component={SignIn} />
+        <Route exact path="/signup" component={SignUp} />
+        <Route exact path="/" component={SignIn} />
+        <Redirect path="/*" to="/" />
+      </Switch>
+    </Container>
+  )
 }
 
-export default App;
+export default observer(App)
