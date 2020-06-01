@@ -1,7 +1,18 @@
 .App {
-  text-align: center;
+  display: flex;
+  justify-content: left;
 }
 
+.SidebarDashboard {
+}
+
+.DashboardContent {
+  padding: 24px;
+}
+
+.SideBarMenuItem {
+  display: flex !important;
+}
 .ui.center.aligned.header,
 .ui.centered.header {
   color: #4babd4;
