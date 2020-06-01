@@ -30,6 +30,7 @@ export class AccountStore {
     try {
       this.account = await agent.Account.signin(formParams)
       this.globalStore.setToken(this.account.token)
+      history.push('/contracts')
     } catch (error) {
       console.error(error)
       return

@@ -1,30 +1,42 @@
 import React, { useEffect, useContext } from 'react'
 import { SignIn, SignUp } from './Containers'
-import { Container, Button, Label } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 import { observer } from 'mobx-react-lite'
 import { Route, Redirect, Switch } from 'react-router-dom'
-
+import LoadingOverlay from 'Components/Loader'
 import 'semantic-ui-css/semantic.min.css'
 import './App.css'
 import { globalStoreContext } from './Stores/globalStore'
+import SidebarDashboard from 'Components/Sidebar'
+import { Contracts } from 'Containers/ContractsPage'
 
 const App: React.FC = () => {
   const globalStore = useContext(globalStoreContext)
-  const { token } = globalStore
-  const { fetchAccount, isAuthenticated, account, signout } = globalStore.accountStore
+  const { token, setAppToLoaded, appIsLoaded } = globalStore
+  const { fetchAccount, isAuthenticated } = globalStore.accountStore
 
   useEffect(() => {
     if (token) {
-      fetchAccount()
+      fetchAccount().finally(() => setAppToLoaded())
+    } else {
+      setAppToLoaded()
     }
-  }, [fetchAccount, token])
+  }, [fetchAccount, token, setAppToLoaded])
+
+  if (!appIsLoaded) return <LoadingOverlay content="Loading Contracter" />
 
   if (isAuthenticated) {
     return (
-      <Container className={'App'}>
-        <Label>Welcome {account.email}</Label>
-        <Button onClick={signout}>Signout</Button>
-      </Container>
+      <>
+        <Container className={'App'}>
+          <SidebarDashboard />
+          <Container className={'DashboardContent'}>
+            <Switch>
+              <Route exact path="/contracts" component={Contracts} />
+            </Switch>
+          </Container>
+        </Container>
+      </>
     )
   }
 

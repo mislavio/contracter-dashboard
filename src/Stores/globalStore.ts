@@ -22,8 +22,14 @@ export class GlobalStore {
 
   @observable token: string = window.localStorage.getItem('jwt') || ''
 
+  @observable appIsLoaded = false
+
   @action setToken = (token: string): void => {
     this.token = token
+  }
+
+  @action setAppToLoaded = (): void => {
+    this.appIsLoaded = true
   }
 }
 
